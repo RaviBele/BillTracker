@@ -15,9 +15,11 @@ const (
 type Account struct {
 	gorm.Model
 	ID    uuid.UUID   `gorm:"type:char(36);primaryKey" json:"id"`
-	Name  string      `gorm:"column:name;size:255;not null;" json:"name"`
+	Name  string      `gorm:"column:name;size:255;not null;" json:"name" validate:"required"`
+	Email string      `gorm:"size:255;not null;unique" json:"email" validate:"required,email"`
+	Phone string      `gorm:"size:20;not null;unique" json:"phone" validate:"required,phone"`
 	Bills []Bill      `gorm:"foreignkey:AccountID" json:"bills"`
-	Type  AccountType `gorm:"column:acc_type;size:255;not null;" json:"type"`
+	Type  AccountType `gorm:"column:acc_type;size:255;not null;" json:"type" validate:"required"`
 }
 
 func NewAccount(name string, a_type AccountType) *Account {

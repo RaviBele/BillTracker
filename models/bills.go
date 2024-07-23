@@ -29,6 +29,7 @@ type Bill struct {
 	Status    BillStatus `gorm:"column:status;size:255;not null;" json:"status"`
 	AccountID uuid.UUID  `gorm:"type:uuid;not null" json:"account_id"`
 	BillType  BillType   `gorm:"size:255;not null;" json:"bill_type"`
+	TotalTax  float64    `gorm:"column:total_tax;not null" json:"total_tax"`
 }
 
 type BillProduct struct {

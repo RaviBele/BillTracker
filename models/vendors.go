@@ -19,6 +19,7 @@ type VendorProduct struct {
 	VendorID uuid.UUID `gorm:"type:uuid;not null" json:"vendor_id"`
 	Name     string    `gorm:"column:name;size:255;not null;" json:"name"`
 	Rate     float64   `gorm:"type:decimal(10,2)" json:"rate"`
+	Tax      float64   `gorm:"type:decimal(5,2);default:0" json:"tax"`
 	Vendor   Vendor
 }
 

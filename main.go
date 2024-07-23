@@ -23,6 +23,7 @@ func main() {
 	// Register routes
 	routes.RegisterAccountRoutes(router)
 	routes.RegisterBillRoutes(router)
+	routes.RegisterVendorRoutes(router)
 
 	// Start the server
 	router.Run(":8080")
