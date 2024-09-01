@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"bill_manager/controllers"
 	"bill_manager/database"
 	"bill_manager/models"
 	"bill_manager/routes"
@@ -17,6 +18,7 @@ func main() {
 	loadEnv()
 	loadDatabase()
 
+	controllers.RegisterValidations()
 	// Set up Gin
 	router := gin.Default()
 

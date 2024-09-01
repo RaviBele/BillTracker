@@ -22,11 +22,11 @@ type Account struct {
 	Type  AccountType `gorm:"column:acc_type;size:255;not null;" json:"type" validate:"required"`
 }
 
-func NewAccount(name string, a_type AccountType) *Account {
+func NewAccount(name string, aType AccountType) *Account {
 	id, _ := uuid.NewUUID()
 	return &Account{
 		ID:   id,
 		Name: name,
-		Type: a_type,
+		Type: aType,
 	}
 }

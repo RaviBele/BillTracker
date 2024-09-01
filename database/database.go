@@ -12,10 +12,9 @@ var Database *gorm.DB
 
 func Connect() error {
 	var err error
-	dns := fmt.Sprintf("%s", os.Getenv("DNS"))
 
 	Database, err = gorm.Open(
-		mysql.Open(dns),
+		mysql.Open(os.Getenv("DNS")),
 	)
 
 	if err == nil {

@@ -3,6 +3,7 @@ package controllers
 import (
 	"bill_manager/database"
 	"bill_manager/models"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,12 @@ import (
 func CreateAccount(c *gin.Context) {
 	var newAccount models.Account
 	if err := c.ShouldBindJSON(&newAccount); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := validate.Struct(newAccount)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -28,10 +35,11 @@ func CreateAccount(c *gin.Context) {
 
 func GetAccounts(c *gin.Context) {
 	var accounts []models.Account
-	if err := database.Database.Find(&accounts).Error; err != nil {
+	if err := database.Database.Table("accounts").Order("name").Limit(10).Find(&accounts).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	log.Printf("Returning accounts : %d", len(accounts))
 	c.JSON(http.StatusOK, accounts)
 }
 
