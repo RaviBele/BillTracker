@@ -14,8 +14,9 @@ import (
 )
 
 const (
-	DEFAULT_LIMIT = 10
-	DEFAULT_PAGE  = 1
+	DEFAULT_MIN_LIMIT = 10
+	DEFAULT_MAX_LIMIT = 50
+	DEFAULT_PAGE      = 1
 )
 
 func CreateAccount(c *gin.Context) {
@@ -45,7 +46,7 @@ func GetAccounts(c *gin.Context) {
 	pageQuery := c.Query("page")
 
 	if limitQuery == "" {
-		limitQuery = fmt.Sprintf("%d", DEFAULT_LIMIT)
+		limitQuery = fmt.Sprintf("%d", DEFAULT_MIN_LIMIT)
 	}
 
 	limit, err := strconv.Atoi(limitQuery)
@@ -54,8 +55,12 @@ func GetAccounts(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if limit < 1 && limit > 100 {
-		limit = DEFAULT_LIMIT
+	if limit < 1 {
+		limit = DEFAULT_MIN_LIMIT
+	}
+
+	if limit > DEFAULT_MAX_LIMIT {
+		limit = DEFAULT_MAX_LIMIT
 	}
 
 	page, err := strconv.Atoi(pageQuery)
@@ -65,7 +70,11 @@ func GetAccounts(c *gin.Context) {
 	}
 
 	var accounts []models.Account
-	if err := database.Database.Table("accounts").Order("created_at desc").Limit(limit).Offset(page).Find(&accounts).Error; err != nil {
+	offset := (page - 1) * limit
+
+	log.Printf("Fetching accounts with limit %d, offset: %d, page: %d", limit, offset, page)
+
+	if err := database.Database.Table("accounts").Order("created_at desc").Limit(limit).Offset(offset).Find(&accounts).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
