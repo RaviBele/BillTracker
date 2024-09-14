@@ -79,8 +79,6 @@ func GetAccounts(c *gin.Context) {
 		return
 	}
 
-	log.Printf("Returning accounts : %d", len(accounts))
-
 	accountResponse := models.AccountListResponse{
 		Pagination: models.Pagination{
 			Page:  page,
