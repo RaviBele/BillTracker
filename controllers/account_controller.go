@@ -3,12 +3,19 @@ package controllers
 import (
 	"bill_manager/database"
 	"bill_manager/models"
+	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+)
+
+const (
+	DEFAULT_LIMIT = 10
+	DEFAULT_PAGE  = 1
 )
 
 func CreateAccount(c *gin.Context) {
@@ -34,13 +41,46 @@ func CreateAccount(c *gin.Context) {
 }
 
 func GetAccounts(c *gin.Context) {
+	limitQuery := c.Query("limit")
+	pageQuery := c.Query("page")
+
+	if limitQuery == "" {
+		limitQuery = fmt.Sprintf("%d", DEFAULT_LIMIT)
+	}
+
+	limit, err := strconv.Atoi(limitQuery)
+	if err != nil {
+		log.Printf("invalid limit query: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if limit < 1 && limit > 100 {
+		limit = DEFAULT_LIMIT
+	}
+
+	page, err := strconv.Atoi(pageQuery)
+	if err != nil {
+		log.Printf("invalid page query: %v", err)
+		page = DEFAULT_PAGE
+	}
+
 	var accounts []models.Account
-	if err := database.Database.Table("accounts").Order("name").Limit(10).Find(&accounts).Error; err != nil {
+	if err := database.Database.Table("accounts").Order("created_at desc").Limit(limit).Offset(page).Find(&accounts).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
 	log.Printf("Returning accounts : %d", len(accounts))
-	c.JSON(http.StatusOK, accounts)
+
+	accountResponse := models.AccountListResponse{
+		Pagination: models.Pagination{
+			Page:  page,
+			Count: len(accounts),
+		},
+		Data: accounts,
+	}
+
+	c.JSON(http.StatusOK, accountResponse)
 }
 
 func GetAccount(c *gin.Context) {

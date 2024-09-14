@@ -30,3 +30,8 @@ func NewAccount(name string, aType AccountType) *Account {
 		Type: aType,
 	}
 }
+
+type AccountListResponse struct {
+	Pagination
+	Data []Account `json:"data`
+}
