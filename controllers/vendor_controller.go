@@ -34,7 +34,7 @@ func CreateVendor(c *gin.Context) {
 
 func GetVendors(c *gin.Context) {
 	var vendors []models.Vendor
-	if err := database.Database.Preload("Product").Find(&vendors).Error; err != nil {
+	if err := database.Database.Preload("Products").Find(&vendors).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

@@ -28,7 +28,7 @@ func main() {
 	routes.RegisterVendorRoutes(router)
 
 	// Start the server
-	router.Run(":8080")
+	router.Run("0.0.0.0:8080")
 }
 
 func loadEnv() {

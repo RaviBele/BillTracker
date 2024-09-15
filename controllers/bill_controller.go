@@ -103,7 +103,7 @@ func GetBills(c *gin.Context) {
 	}
 
 	var bills []models.Bill
-	if result := database.Database.Preload("Products").Find(&bills, "account_id = ?", account_id); result.Error != nil {
+	if result := database.Database.Preload("Products.Product").Find(&bills, "account_id = ?", account_id); result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not fetch created bill with products"})
 		return
 	}

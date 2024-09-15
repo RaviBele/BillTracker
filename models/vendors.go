@@ -6,21 +6,21 @@ import (
 )
 
 type Vendor struct {
-	gorm.Model
 	ID       uuid.UUID       `gorm:"type:char(36);primaryKey" json:"id"`
 	Name     string          `gorm:"column:name;size:255;not null;" json:"name"`
 	Products []VendorProduct `gorm:"foreignKey:VendorID" json:"products"`
+	gorm.Model
 }
 
 type VendorProduct struct {
-	gorm.Model
 	ID       uuid.UUID `gorm:"type:char(36);primaryKey" json:"id"`
 	Code     int       `gorm:"unique" json:"code"`
 	VendorID uuid.UUID `gorm:"type:uuid;not null" json:"vendor_id"`
 	Name     string    `gorm:"column:name;size:255;not null;" json:"name"`
 	Rate     float64   `gorm:"type:decimal(10,2)" json:"rate"`
 	Tax      float64   `gorm:"type:decimal(5,2);default:0" json:"tax"`
-	Vendor   Vendor
+	Vendor   Vendor    `json:"-"`
+	gorm.Model
 }
 
 func NewVendor(name string) *Vendor {
